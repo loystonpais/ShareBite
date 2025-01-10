@@ -3,14 +3,19 @@ import { Capacitor } from '@capacitor/core';
 import { Button } from "@/components/ui/button";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
-
+import Card from "./FoodCard";
+import Display from "./Display";
 
 export default function HomePage(platform: string) {
 
   return (
     <>
     <Navbar></Navbar>
-    <Sidebar></Sidebar>
+    <div className="flex">
+      <Sidebar></Sidebar>
+      <Display></Display>
+    </div>
+    
     <h1>{platform}</h1>
     </>
   );

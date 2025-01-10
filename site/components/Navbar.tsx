@@ -1,4 +1,5 @@
 import React from 'react'
+import { Avatar } from '@radix-ui/react-avatar'
 
 const Navbar = () => {
   return (
