@@ -7,7 +7,7 @@
     let
       forAllSystems = nixpkgs.lib.genAttrs nixpkgs.lib.systems.flakeExposed;
 
-      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; });
+      nixpkgsFor = forAllSystems (system: import nixpkgs { inherit system; config.allowUnfree = true; });
 
       packages = forAllSystems (system: {
         default = import ./default.nix { pkgs = nixpkgsFor.${system}; };
