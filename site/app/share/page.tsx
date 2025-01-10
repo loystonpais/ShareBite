@@ -87,8 +87,8 @@ export default function CardWithForm() {
         // Optional: Reset form
         setTitle("");
         setType("");
-        setPrepare(undefined);
-        setExpiry(undefined);
+        setPrepare(new Date());
+        setExpiry(new Date());
         setServings(1);
   
       } catch (error) {
