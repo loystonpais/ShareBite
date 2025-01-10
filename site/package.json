@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "static": "NEXT_PUBLIC_IS_MOBILE=true next build",
     "lint": "next lint"
   },
   "dependencies": {
