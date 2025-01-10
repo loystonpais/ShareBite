@@ -12,7 +12,6 @@ export default function HomePage(platform: string) {
     <>
     <Navbar></Navbar>
     <Display></Display>
-    <h1>{platform}</h1>
     </>
   );
 }

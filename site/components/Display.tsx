@@ -1,23 +1,29 @@
-import React from "react";
-import FoodCard from "./FoodCard";
+// app/page.tsx
+import FoodCard from "@/components/FoodCard";
+import redis from "@/lib/redis";
 
-const Display = () => {
+export default async function HomePage() {
+  // Fetch food data
+  const foodData = await redis.lRange("food_data_test", 0, -1);
+  const foodDataFiltered = foodData.filter((foodItem) => foodItem !== "");
+
   return (
-    <div className="">
-      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <FoodCard
-            key={index}
-            title={`Food Item ${index + 1}`}
-            prepared="Prepared Date"
-            expiry="Expiry Date"
-            type="Food Type"
-            servings="Number of Servings"
-          />
-        ))}
+    <div className="p-4">
+      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 place-items-center">
+        {foodDataFiltered.map((foodItem, index) => {
+          const parsedFoodItem = JSON.parse(foodItem);
+          return (
+            <FoodCard
+              key={index}
+              title={parsedFoodItem.title}
+              prepared={parsedFoodItem.prepared}
+              expiry={parsedFoodItem.expiry}
+              type={parsedFoodItem.type}
+              servings={parsedFoodItem.servings}
+            />
+          );
+        })}
       </div>
     </div>
   );
-};
-
-export default Display;
+}

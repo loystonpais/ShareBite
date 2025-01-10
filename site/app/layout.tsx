@@ -27,7 +27,7 @@ export default function RootLayout({
           }}
         >
           {/* Add a blur overlay */}
-          <div className="min-h-screen backdrop-blur-sm bg-black/30">
+          <div className="min-h-screen backdrop-blur-sm bg-black/30 pb-10">
             {children}
           </div>
         </div>
