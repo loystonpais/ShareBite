@@ -15,3 +15,23 @@ export async function POST(request: Request) {
     )
   }
 }
+
+export async function DELETE(request: Request) {
+    try {
+        const { id } = await request.json();
+        const foodData = await redis.lRange("food_data_test", 0, -1);
+        const foodDataFiltered = foodData.filter((foodItem) => foodItem !== "");
+
+        const updatedFoodData = foodDataFiltered.filter((foodItem) => {
+            const parsedFoodItem = JSON.parse(foodItem);
+            return parsedFoodItem.id !== id;
+        });
+
+        await redis.del("food_data_test");
+        await redis.rPush("food_data_test", updatedFoodData);
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        return NextResponse.json({ success: false, error: 'Failed to delete item' }, { status: 500 });
+    }
+}

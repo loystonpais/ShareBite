@@ -32,20 +32,27 @@ export default function FoodCard({
   email: string;
 }) {
 
-  /*const handleBooking = async () => {
-    const foodData = await redis.lRange("food_data_test", 0, -1);
-    const foodDataFiltered = foodData.filter((foodItem) => foodItem !== "");
+  const handleBooking = async () => {
+    try {
+        const response = await fetch('/api/food', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+        });
 
-    foodDataFiltered.forEach((foodItem, index) => {
-      const parsedFoodItem = JSON.parse(foodItem);
-      if (parsedFoodItem.id === id) {
-        foodDataFiltered.splice(index, 1);
-      }
-    });
+        if (!response.ok) {
+            throw new Error('Failed to delete item');
+        }
 
-    await redis.del("food_data_test");
-    await redis.rPush("food_data_test", foodDataFiltered);
-  };*/
+        // Handle successful deletion (e.g., refresh the page or update UI)
+        window.location.reload(); // Or use a more sophisticated state update method
+    } catch (error) {
+        console.error('Error in handleBooking:', error);
+    }
+};
+
 
   return (
     <>
@@ -72,7 +79,7 @@ export default function FoodCard({
           <p className="text-sm mb-1">Contact Email: {email}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center mt-4">
-          <Button className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">
+          <Button  onClick={handleBooking} className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">
             Book Food
           </Button>
         </CardFooter>
