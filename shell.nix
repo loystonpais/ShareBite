@@ -2,7 +2,7 @@
 
 pkgs.mkShell {
   buildInputs = with pkgs; [
-    nodejs_23
+    nodejs_20
     yarn
     yarn2nix
     prefetch-npm-deps
