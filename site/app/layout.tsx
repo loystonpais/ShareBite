@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Capacitor } from "@capacitor/core";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,12 +23,21 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const platform = Capacitor.getPlatform();
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <div className={`layout ${platform}`}>
+          {platform === "android" && (
+            <header className="android-header">Android Header</header>
+          )}
+          {platform === "web" && (
+            <header className="web-header">Web Header</header>
+          )}
+          <main>{children}</main>
+        </div>
       </body>
     </html>
   );
