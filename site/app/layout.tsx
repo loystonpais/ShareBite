@@ -6,6 +6,8 @@ import Display from "@/components/Display"
 import Sidebar from "@/components/Sidebar"
 import sidebarweb from "@/components/Sidebar"
 
+import { Toaster } from "@/components/ui/toaster"
+
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
@@ -32,6 +34,7 @@ export default function RootLayout({
             {children}
           </div>
         </div>
+        <Toaster />
         <Sidebar></Sidebar>
       </body>
     </html>

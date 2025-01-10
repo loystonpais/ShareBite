@@ -26,6 +26,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
+import Cookies from "js-cookie";
+
+import { toast } from "@/hooks/use-toast";
 
 
 export default function CardWithForm() {
@@ -35,17 +38,33 @@ export default function CardWithForm() {
     const [expiry, setExpiry] = useState<Date>();
     const [isLoading, setIsLoading] = useState(false);
     const [servings, setServings] = useState(1);
+
+    const shareBitesEmail = Cookies.get('shareBiteEmail');
+    const shareBitesPaswd = Cookies.get('shareBitePswd');
   
     const handleShareClick = async () => {
       try {
         setIsLoading(true);
+
+        if (!shareBitesEmail && !shareBitesPaswd) {
+            toast({
+                title: "Error",
+                description: "Please login first",
+                variant: "destructive",
+            });
+            return
+        }
+
+        const id = Math.floor(Math.random() * 100000)
         
         const foodData = {
+          id,
           title,
           type,
           prepared: prepared?.toISOString(),
           expiry: expiry?.toISOString(),
-          servings: servings
+          servings: servings,
+          email: shareBitesEmail,
         };
   
         const response = await fetch('/api/food', {
