@@ -30,12 +30,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <div className={`layout ${platform}`}>
-          {platform === "android" && (
-            <header className="android-header">Android Header</header>
-          )}
-          {platform === "web" && (
-            <header className="web-header">Web Header</header>
-          )}
           <main>{children}</main>
         </div>
       </body>

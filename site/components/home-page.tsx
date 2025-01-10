@@ -11,7 +11,7 @@ export default function HomePage(platform: string) {
   return (
     <>
     <Navbar></Navbar>
-    <div className="flex">
+    <div className="flex justify-evenly">
       <Sidebar></Sidebar>
       <Display></Display>
     </div>
