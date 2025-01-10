@@ -3,7 +3,7 @@ import Card from "./FoodCard";
 
 const Display = () => {
   return (
-    <div className='p-10 grid-rows-*'>
+    <div className='p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6'>
         <Card></Card>
         <Card></Card>
         <Card></Card>
