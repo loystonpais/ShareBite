@@ -43,61 +43,135 @@ export default function CardWithForm() {
     const shareBitesPaswd = Cookies.get('shareBitePswd');
   
     const handleShareClick = async () => {
-      try {
-        setIsLoading(true);
-
-        if (!shareBitesEmail && !shareBitesPaswd) {
+        try {
+          setIsLoading(true);
+      
+          // First check for login
+          if (!shareBitesEmail && !shareBitesPaswd) {
             toast({
-                title: "Error",
-                description: "Please login first",
-                variant: "destructive",
+              title: "Error",
+              description: "Please login first",
+              variant: "destructive",
             });
-            return
+            setIsLoading(false);
+            return;
+          }
+      
+          // Validate all required fields
+          if (!title.trim()) {
+            toast({
+              title: "Missing Information",
+              description: "Please enter a title for your food item",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          if (!type) {
+            toast({
+              title: "Missing Information",
+              description: "Please select a food type",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          if (!prepared) {
+            toast({
+              title: "Missing Information",
+              description: "Please select the preparation date",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          if (!expiry) {
+            toast({
+              title: "Missing Information",
+              description: "Please select the expiry date",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          // Validate that expiry date is after prepared date
+          if (expiry < prepared) {
+            toast({
+              title: "Invalid Dates",
+              description: "Expiry date cannot be before preparation date",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          // Validate servings
+          if (servings < 1) {
+            toast({
+              title: "Invalid Servings",
+              description: "Number of servings must be at least 1",
+              variant: "destructive",
+            });
+            setIsLoading(false);
+            return;
+          }
+      
+          const id = Math.floor(Math.random() * 100000);
+          
+          const foodData = {
+            id,
+            title,
+            type,
+            prepared: prepared.toISOString(),
+            expiry: expiry.toISOString(),
+            servings: servings,
+            email: shareBitesEmail,
+          };
+      
+          const response = await fetch('/api/food', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(foodData),
+          });
+      
+          const result = await response.json();
+      
+          if (!response.ok) {
+            throw new Error(result.error || 'Something went wrong');
+          }
+      
+          // Show success toast
+          toast({
+            title: "Success",
+            description: "Food item shared successfully!",
+            variant: "default",
+          });
+      
+          // Reset form
+          setTitle("");
+          setType("");
+          setPrepare(new Date());
+          setExpiry(new Date());
+          setServings(1);
+      
+        } catch (error) {
+          console.error('Error saving food item:', error);
+          toast({
+            title: "Error",
+            description: "Failed to share food item. Please try again.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
         }
-
-        const id = Math.floor(Math.random() * 100000)
-        
-        const foodData = {
-          id,
-          title,
-          type,
-          prepared: prepared?.toISOString(),
-          expiry: expiry?.toISOString(),
-          servings: servings,
-          email: shareBitesEmail,
-        };
-  
-        const response = await fetch('/api/food', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(foodData),
-        });
-  
-        const result = await response.json();
-  
-        if (!response.ok) {
-          throw new Error(result.error || 'Something went wrong');
-        }
-  
-        // Handle success (e.g., show success message, reset form, redirect)
-        console.log('Food item saved successfully:', result);
-        
-        // Optional: Reset form
-        setTitle("");
-        setType("");
-        setPrepare(new Date());
-        setExpiry(new Date());
-        setServings(1);
-  
-      } catch (error) {
-        console.error('Error saving food item:', error);
-        // Handle error (e.g., show error message to user)
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      };
+      
   
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
