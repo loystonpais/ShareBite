@@ -15,7 +15,7 @@ import { Card,
   }){
   return (
     <>
-        <Card className="w-[350px] bg-white p-4 text-black shadow-md rounded-lg">
+        <Card className="w-[350px] bg-white p-4 text-black shadow-md rounded-lg ">
           <CardHeader className="w-full h-[300px] bg-slate-500 rounded mb-4 flex items-center justify-center">
             <p className="text-white font-bold">Image Placeholder</p>
           </CardHeader>
@@ -27,7 +27,7 @@ import { Card,
             <p className="text-sm mb-1">Servings: {servings}</p>
           </CardContent>
           <CardFooter className="flex justify-between items-center mt-4">
-            <Button className="bg-blue-600 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-blue-400">
+            <Button className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-blue-400">
               Book Food
             </Button>
           </CardFooter>

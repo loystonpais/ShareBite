@@ -3,8 +3,8 @@ import FoodCard from "./FoodCard";
 
 const Display = () => {
   return (
-    <div className="items-center">
-      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="">
+      <div className="p-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center">
         {Array.from({ length: 10 }).map((_, index) => (
           <FoodCard
             key={index}
