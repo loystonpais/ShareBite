@@ -1,6 +1,9 @@
 # Share Bite 🌮: Tackling Food Waste, One Bite at a Time  
 
-![App user interface](assets/ss1.png)
+![App user interface](assets/ss1.png)<br/><br/>
+
+## Video
+[Click here to watch the video](https://drive.google.com/file/d/10R-t37lEyPoZnBpOSkEA6rmE4enzE8-T) 
 
 ## Overview  
 Food waste is a significant global issue, with excess food being one of its primary causes. To address this problem, **Share Bite** provides a platform where individuals can share their excess food with those in need. This app/website aims to reduce food waste while fostering a spirit of community and generosity.
