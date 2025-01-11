@@ -18,61 +18,75 @@ export async function POST(request: Request) {
 
 // app/api/food/route.ts
 export async function DELETE(request: Request) {
-  try {
-    const { id, userEmail } = await request.json();
-
-    // Get user data from Redis
-    const userData = await redis.get(`user:${userEmail}`);
-
-    if (!userData) {
-      return NextResponse.json({ success: false, error: "User not found" });
-    }
-
-    // Parse the user data (assuming it's stored as a string)
-    let userObj;
     try {
-      userObj = JSON.parse(userData);
-    } catch (e) {
-      // If userData is not valid JSON, initialize a new object
-      userObj = {
-        password: userData, // preserve the existing password if it's stored as string
-        bookings: [],
-      };
+      const { id, userEmail } = await request.json();
+  
+      // First, find the food item being booked
+      const foodData = await redis.lRange("food_data_test", 0, -1);
+      const foodItem = foodData
+        .map(item => JSON.parse(item))
+        .find(item => item.id === id);
+  
+      // Check if food item exists
+      if (!foodItem) {
+        return NextResponse.json({ 
+          success: false, 
+          error: "Food item not found" 
+        }, { status: 404 });
+      }
+  
+      // Check if user is trying to book their own food item
+      if (foodItem.email === userEmail) {
+        return NextResponse.json({ 
+          success: false, 
+          error: "You cannot book your own shared food item" 
+        }, { status: 400 });
+      }
+  
+      // Get user data from Redis
+      const userData = await redis.get(`user:${userEmail}`);
+  
+      if (!userData) {
+        return NextResponse.json({ success: false, error: "User not found" });
+      }
+  
+      // Rest of your existing code...
+      let userObj;
+      try {
+        userObj = JSON.parse(userData);
+      } catch (e) {
+        userObj = {
+          password: userData,
+          bookings: [],
+        };
+      }
+  
+      if (!userObj.bookings) {
+        userObj.bookings = [];
+      }
+  
+      userObj.bookings.push(id);
+  
+      await redis.set(`user:${userEmail}`, JSON.stringify(userObj));
+  
+      // Update food data
+      const foodDataFiltered = foodData.filter((foodItem) => foodItem !== "");
+  
+      const updatedFoodData = foodDataFiltered.filter((foodItem) => {
+        const parsedFoodItem = JSON.parse(foodItem);
+        return parsedFoodItem.id !== id;
+      });
+  
+      await redis.del("food_data_test");
+      await redis.rPush("food_data_test", updatedFoodData);
+  
+      return NextResponse.json({ success: true });
+    } catch (error) {
+      console.error("Error in DELETE /api/food:", error);
+      return NextResponse.json({
+        success: false,
+        error: "Failed to book food item",
+      });
     }
-
-    // Initialize bookings array if it doesn't exist
-    if (!userObj.bookings) {
-      userObj.bookings = [];
-    }
-
-    // Add the new booking
-    userObj.bookings.push(id);
-
-    // Save the updated user data back to Redis
-    await redis.set(`user:${userEmail}`, JSON.stringify(userObj));
-
-
-    //! update food data
-
-    const foodData = await redis.lRange("food_data_test", 0, -1);
-    const foodDataFiltered = foodData.filter((foodItem) => foodItem !== "");
-
-    const updatedFoodData = foodDataFiltered.filter((foodItem) => {
-      const parsedFoodItem = JSON.parse(foodItem);
-      return parsedFoodItem.id !== id;
-    });
-
-    //! update food data end
-
-    await redis.del("food_data_test");
-    await redis.rPush("food_data_test", updatedFoodData);
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error in DELETE /api/food:", error);
-    return NextResponse.json({
-      success: false,
-      error: "Failed to book food item",
-    });
   }
-}
+  
