@@ -14,6 +14,10 @@ import { formatDate } from "@/lib/date";
 import Image from "next/image";
 import redis from "@/lib/redis";
 
+import { useToast } from "@/hooks/use-toast";
+
+import Cookies from "js-cookie";
+
 export default function FoodCard({
   id,
   title,
@@ -32,26 +36,79 @@ export default function FoodCard({
   email: string;
 }) {
 
-  const handleBooking = async () => {
+  const { toast } = useToast();
+
+  const handleBooking = async (id: number) => {
+    const userEmail = Cookies.get("shareBiteEmail");
+    
+    if (!userEmail) {
+        toast({
+            title: "Authentication Required",
+            description: "Please login first to book food items.",
+            variant: "destructive",
+        });
+        return;
+    }
+
+    // First verify if user exists in Redis
     try {
+        const verifyResponse = await fetch('/api/auth/verify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userEmail }),
+        });
+
+        const verifyData = await verifyResponse.json();
+        
+        if (!verifyData.success) {
+            toast({
+                title: "Authentication Failed",
+                description: "Please login again to continue.",
+                variant: "destructive",
+            });
+            // Optionally clear the invalid cookie
+            Cookies.remove("shareBiteEmail");
+            return;
+        }
+
+        // If user is verified, proceed with booking
         const response = await fetch('/api/food', {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({
+                id,
+                userEmail
+            }),
         });
 
-        if (!response.ok) {
-            throw new Error('Failed to delete item');
+        const data = await response.json();
+        if (data.success) {
+            toast({
+                title: "Success",
+                description: "Food item booked successfully!",
+            });
+            // Add any additional success handling here
+        } else {
+            toast({
+                title: "Error",
+                description: data.error || "Failed to book food item",
+                variant: "destructive",
+            });
         }
-
-        // Handle successful deletion (e.g., refresh the page or update UI)
-        window.location.reload(); // Or use a more sophisticated state update method
     } catch (error) {
-        console.error('Error in handleBooking:', error);
+        toast({
+            title: "Error",
+            description: `An error occurred while booking the food item ${error}`,
+            variant: "destructive",
+        });
+        console.error('Error booking food:', error);
     }
 };
+
 
 
   return (
@@ -79,7 +136,7 @@ export default function FoodCard({
           <p className="text-sm mb-1">Contact Email: {email}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center mt-4">
-          <Button  onClick={handleBooking} className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">
+          <Button  onClick={() => handleBooking(id)} className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">
             Book Food
           </Button>
         </CardFooter>

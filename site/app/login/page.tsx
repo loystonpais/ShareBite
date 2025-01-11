@@ -8,7 +8,7 @@ import Cookies from 'js-cookie'; // You'll need to install this: npm install js-
 const LoginPage = () => {
   const { toast } = useToast();
    
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     const formData = new FormData(e.currentTarget);
@@ -16,24 +16,41 @@ const LoginPage = () => {
     const password = formData.get('password') as string;
     const rememberMe = formData.get('remember') === 'on';
     
-    if (rememberMe) {
-      Cookies.set('shareBiteEmail', email, { expires: 7 });
-      Cookies.set("shareBitePswd", password, { expires: 7 }); // Expires in 7 days
-    } else {
-      Cookies.remove('shareBiteEmail');
-      Cookies.remove("shareBitePswd");
+    try {
+      // Call the login API
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+  
+      if (rememberMe) {
+        Cookies.set('shareBiteEmail', email, { expires: 7 });
+        // Don't store the password in cookies for security
+      } else {
+        Cookies.remove('shareBiteEmail');
+        Cookies.remove("shareBitePswd");
+      }
+  
+      toast({
+        title: "Login Successful",
+        description: "You have successfully logged in.",
+      });
+    } catch (error) {
+      toast({
+        title: "Login Failed",
+        description: "An error occurred during login.",
+        variant: "destructive",
+      });
     }
-    
-    // Here you would typically:
-    // 1. Send credentials to your backend
-    // 2. Receive a session token or JWT
-    // 3. Store that token in cookies or localStorage
-    
-    toast({
-      title: "Login Successful",
-      description: "You have successfully logged in.",
-    });
   };
+  
 
   // Check for remembered email when component mounts
   useEffect(() => {
