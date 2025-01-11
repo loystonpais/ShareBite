@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 import {
   Card,
@@ -28,7 +28,7 @@ export default function FoodCard({
   email,
   location,
 }: {
-  id: number,
+  id: number;
   title: string;
   prepared: string;
   expiry: string;
@@ -37,96 +37,102 @@ export default function FoodCard({
   email: string;
   location: string;
 }) {
-
   const { toast } = useToast();
 
   const handleBooking = async (id: number) => {
     const userEmail = Cookies.get("shareBiteEmail");
-    
+
     if (!userEmail) {
-        toast({
-            title: "Authentication Required",
-            description: "Please login first to book food items.",
-            variant: "destructive",
-        });
-        return;
+      toast({
+        title: "Authentication Required",
+        description: "Please login first to book food items.",
+        variant: "destructive",
+      });
+      return;
     }
 
     // First verify if user exists in Redis
     try {
-        const verifyResponse = await fetch('/api/auth/verify', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: userEmail }),
-        });
+      const verifyResponse = await fetch("/api/auth/verify", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
 
-        const verifyData = await verifyResponse.json();
-        
-        if (!verifyData.success) {
-            toast({
-                title: "Authentication Failed",
-                description: "Please login again to continue.",
-                variant: "destructive",
-            });
-            // Optionally clear the invalid cookie
-            Cookies.remove("shareBiteEmail");
-            return;
-        }
+      const verifyData = await verifyResponse.json();
 
-        // If user is verified, proceed with booking
-        const response = await fetch('/api/food', {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                id,
-                userEmail
-            }),
-        });
-
-        const data = await response.json();
-        if (data.success) {
-            toast({
-                title: "Success",
-                description: "Food item booked successfully!",
-            });
-            // Add any additional success handling here
-        } else {
-            toast({
-                title: "Error",
-                description: data.error || "Failed to book food item",
-                variant: "destructive",
-            });
-        }
-    } catch (error) {
+      if (!verifyData.success) {
         toast({
-            title: "Error",
-            description: `An error occurred while booking the food item ${error}`,
-            variant: "destructive",
+          title: "Authentication Failed",
+          description: "Please login again to continue.",
+          variant: "destructive",
         });
-        console.error('Error booking food:', error);
+        // Optionally clear the invalid cookie
+        Cookies.remove("shareBiteEmail");
+        return;
+      }
+
+      // If user is verified, proceed with booking
+      const response = await fetch("/api/food", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id,
+          userEmail,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        toast({
+          title: "Success",
+          description: "Food item booked successfully!",
+        });
+        // Add any additional success handling here
+      } else {
+        toast({
+          title: "Error",
+          description: data.error || "Failed to book food item",
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: `An error occurred while booking the food item ${error}`,
+        variant: "destructive",
+      });
+      console.error("Error booking food:", error);
     }
-};
+  };
 
+  // At the top of your FoodCard component, add this array
+  const sampleImages = ["/sample1.jpg", "/sample2.jpg", "/sample3.jpg"];
 
+  // Add this function inside your component
+  const getRandomImage = () => {
+    const randomIndex = Math.floor(Math.random() * sampleImages.length);
+    return sampleImages[randomIndex];
+  };
 
   return (
     <>
       <Card className="w-[350px] bg-white p-4 text-black shadow-md rounded-lg ">
         {/*<CardHeader className="w-full h-[300px] bg-slate-500 rounded mb-4 flex items-center justify-center">*/}
-          {/*<p className="text-white font-bold">Image Placeholder</p>*/}
-          <Image
-            src="/sample1.jpg"
-            alt="alt"
-            width={0}
-            height={0}
-            sizes="100vw"
-            style={{ width: "100%", height: "auto" }}
-            className="rounded mb-4"
-          />
+        {/*<p className="text-white font-bold">Image Placeholder</p>*/}
+        <Image
+          src={getRandomImage()}
+          alt="alt"
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{ width: "100%", height: "auto" }}
+          className="rounded mb-4"
+        />
         {/*</CardHeader>*/}
         <CardContent>
           <CardTitle>{title}</CardTitle>
@@ -139,7 +145,10 @@ export default function FoodCard({
           <p className="text-sm mb-1">Location: {location}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center mt-4">
-          <Button  onClick={() => handleBooking(id)} className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">
+          <Button
+            onClick={() => handleBooking(id)}
+            className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600"
+          >
             Book Food
           </Button>
         </CardFooter>
