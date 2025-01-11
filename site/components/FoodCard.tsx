@@ -111,7 +111,14 @@ export default function FoodCard({
   };
 
   // At the top of your FoodCard component, add this array
-  const sampleImages = ["/sample1.jpg", "/sample2.jpg", "/sample3.jpg"];
+  const sampleImages = [
+    "/sample1.jpg", 
+    "/sample2.jpg", 
+    "/sample3.jpg", 
+    "/sample4.jpg", 
+    "/sample5.jpg", 
+    "/sample6.jpg"
+  ];
 
   // Add this function inside your component
   const getRandomImage = () => {
