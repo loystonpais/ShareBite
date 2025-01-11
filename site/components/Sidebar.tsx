@@ -16,28 +16,25 @@ const sidebarweb = () => {
       <div className="backdrop-blur-md bg-white/60 flex flex-row items-center justify-around py-4 px-2">
         <Link href="/">
           <Button 
-            className="w-24 h-12 text-center text-Black"
+            className="w-24 h-12 text-center text-gray-600"
           >
             HOME
           </Button>
         </Link>
         <Link href="/share">
           <Button 
-            className="w-24 h-12 text-center text-Black"
+            className="w-24 h-12 text-center text-gray-600"
           >
             SHARE
           </Button>
-        </Link >
-
-        <Link href="/bookings">
-            <Button 
-            className="w-24 h-12 text-center text-Black"
-            >
-            BOOKINGS
-            </Button>
         </Link>
         <Button 
-          className="w-24 h-12 text-center text-Black"
+          className="w-24 h-12 text-center text-gray-600"
+        >
+          BOOKINGS
+        </Button>
+        <Button 
+          className="w-24 h-12 text-center text-gray-600"
         >
           DONATION
         </Button>
