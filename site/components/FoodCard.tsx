@@ -26,6 +26,7 @@ export default function FoodCard({
   type,
   servings,
   email,
+  location,
 }: {
   id: number,
   title: string;
@@ -34,6 +35,7 @@ export default function FoodCard({
   type: string;
   servings: string;
   email: string;
+  location: string;
 }) {
 
   const { toast } = useToast();
@@ -134,6 +136,7 @@ export default function FoodCard({
           <p className="text-sm mb-1">Type: {type}</p>
           <p className="text-sm mb-1">Servings: {servings}</p>
           <p className="text-sm mb-1">Contact Email: {email}</p>
+          <p className="text-sm mb-1">Location: {location}</p>
         </CardContent>
         <CardFooter className="flex justify-between items-center mt-4">
           <Button  onClick={() => handleBooking(id)} className="bg-red-900 text-white px-4 py-2 rounded hover:drop-shadow-lg hover:bg-red-600">

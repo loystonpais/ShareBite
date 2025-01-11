@@ -1,7 +1,6 @@
 // app/page.tsx
 import FoodCard from "@/components/FoodCard";
 import redis from "@/lib/redis";
-import { Divide } from "lucide-react";
 
 export default async function HomePage() {
   // Fetch food data
@@ -23,6 +22,7 @@ export default async function HomePage() {
               type={parsedFoodItem.type}
               servings={parsedFoodItem.servings}
               email={parsedFoodItem.email}
+              location={parsedFoodItem.location}
             />
           );
         })}
